@@ -1,0 +1,5 @@
+# Default owner for everything in this repository.
+* @AlzyWelzy
+
+# Configuration is the single source of truth for all monitoring — review carefully.
+/.upptimerc.yml @AlzyWelzy

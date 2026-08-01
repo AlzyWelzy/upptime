@@ -1,31 +1,166 @@
-# Change these first
-owner: upptime # Your GitHub organization or username, where this repository lives
-repo: upptime # The name of this repository
+# Upptime configuration
+# Docs: https://upptime.js.org/docs/configuration
+#
+# This file is the single source of truth. Everything in .github/workflows is
+# GENERATED from this file by the `update-template` job — never edit those by
+# hand, your changes are deleted and rewritten on the next run.
 
+owner: AlzyWelzy # GitHub username / organization that owns this repository
+repo: upptime # Name of this repository
+
+# Sent as the User-Agent on GitHub API requests.
+user-agent: AlzyWelzy
+
+# ---------------------------------------------------------------------------
+# Monitors
+# ---------------------------------------------------------------------------
+# `slug` pins the generated filenames under history/, api/ and graphs/. Set it
+# explicitly: without it the slug is derived from `name`, so renaming a monitor
+# silently orphans its recorded history and the old data gets pruned.
+#
+# `__dangerous__body_down_if_text_missing` guards against the "200 OK but the
+# page is broken" failure mode — a healthy status code alone is not proof the
+# site rendered. Each string below was verified present in the served HTML.
 sites:
-  - name: Google
-    url: https://www.google.com
-  - name: Wikipedia
-    url: https://en.wikipedia.org
-  - name: Hacker News
-    url: https://news.ycombinator.com
-  - name: Secret Site
-    url: $SECRET_SITE
+  - name: rajpoot.dev
+    slug: rajpoot-dev
+    url: https://rajpoot.dev
+    # Apex 301-redirects to www; redirects are followed, so this also asserts
+    # the redirect target is healthy.
+    maxResponseTime: 2000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
 
+  - name: www.rajpoot.dev
+    slug: www-rajpoot-dev
+    url: https://www.rajpoot.dev
+    maxResponseTime: 2000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+
+  - name: blog.rajpoot.dev
+    slug: blog-rajpoot-dev
+    url: https://blog.rajpoot.dev
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+
+  - name: scorefit.net
+    slug: scorefit-net
+    url: https://scorefit.net
+    # Apex 308-redirects to www.scorefit.net.
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "ScoreFit"
+
+  - name: pacestreak.net
+    slug: pacestreak-net
+    url: https://pacestreak.net
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+
+# ---------------------------------------------------------------------------
+# Secrets allowlist
+# ---------------------------------------------------------------------------
+# When this key is present it is EXHAUSTIVE — only these secrets are injected
+# into the workflow's SECRETS_CONTEXT. Keeping it explicit is least-privilege:
+# without it, Upptime emits references for every notification provider it
+# supports (~90 entries), most of which will never be set.
+#
+# Add the matching repository secrets under
+# Settings -> Secrets and variables -> Actions.
+secrets:
+  # Telegram — NOTIFICATION_TELEGRAM must be set (any truthy value) to enable.
+  - NOTIFICATION_TELEGRAM
+  - NOTIFICATION_TELEGRAM_BOT_KEY
+  - NOTIFICATION_TELEGRAM_CHAT_ID # comma-separated for multiple chats
+  # Email over SMTP — NOTIFICATION_EMAIL_SMTP must be set to enable.
+  - NOTIFICATION_EMAIL_SMTP
+  - NOTIFICATION_EMAIL_SMTP_HOST
+  - NOTIFICATION_EMAIL_SMTP_PORT
+  - NOTIFICATION_EMAIL_SMTP_USERNAME
+  - NOTIFICATION_EMAIL_SMTP_PASSWORD
+  - NOTIFICATION_EMAIL_FROM
+  - NOTIFICATION_EMAIL_TO
+  # Optional message overrides
+  - NOTIFICATIONS_DOWN_MESSAGE
+  - NOTIFICATIONS_UP_MESSAGE
+
+# ---------------------------------------------------------------------------
+# Incidents
+# ---------------------------------------------------------------------------
+# Downtime opens a GitHub issue; recovery closes it. This repo is the incident log.
+assignees:
+  - AlzyWelzy
+
+# Keep issues for outages that resolve in under 15 minutes instead of deleting
+# them. Flapping is a real signal and should stay in the audit trail.
+skipDeleteIssues: true
+
+# ---------------------------------------------------------------------------
+# Status page
+# ---------------------------------------------------------------------------
 status-website:
-  # Add your custom domain name, or remove the `cname` line if you don't have a domain
-  # Uncomment the `baseUrl` line if you don't have a custom domain and add your repo name there
-  cname: demo.upptime.js.org
-  # baseUrl: /your-repo-name
-  logoUrl: https://raw.githubusercontent.com/upptime/upptime.js.org/master/static/img/icon.svg
-  name: Upptime
-  introTitle: "**Upptime** is the open-source uptime monitor and status page, powered entirely by GitHub."
-  introMessage: This is a sample status page which uses **real-time** data from our [GitHub repository](https://github.com/upptime/upptime). No server required — just GitHub Actions, Issues, and Pages. [**Get your own for free**](https://github.com/upptime/upptime)
+  cname: status.rajpoot.dev
+  name: Rajpoot Status
+  theme: dark
+  logoUrl: https://www.rajpoot.dev/icon.svg
+  faviconSvg: https://www.rajpoot.dev/icon.svg
+  favicon: https://www.rajpoot.dev/favicon.ico
+  introTitle: "**Rajpoot** service status"
+  introMessage: Live availability and response times for rajpoot.dev and related services. Every endpoint is checked from GitHub Actions every 5 minutes; incidents are tracked as [GitHub issues](https://github.com/$OWNER/$REPO/issues).
   navbar:
     - title: Status
       href: /
+    - title: Website
+      href: https://rajpoot.dev
+    - title: Incidents
+      href: https://github.com/$OWNER/$REPO/issues
     - title: GitHub
       href: https://github.com/$OWNER/$REPO
+  metaTags:
+    - name: description
+      content: Live uptime and response-time status for rajpoot.dev, blog.rajpoot.dev, scorefit.net and pacestreak.net.
+    - name: og:title
+      content: Rajpoot Status
+    - name: og:description
+      content: Live uptime and response-time status for rajpoot.dev and related services.
+    - name: og:url
+      content: https://status.rajpoot.dev
+    - name: og:type
+      content: website
+    - name: twitter:card
+      content: summary
+  robotsText: |
+    User-agent: *
+    Allow: /
+    Sitemap: https://status.rajpoot.dev/sitemap.xml
 
-# Upptime also supports notifications, assigning issues, and more
-# See https://upptime.js.org/docs/configuration
+# ---------------------------------------------------------------------------
+# Commit messages
+# ---------------------------------------------------------------------------
+# [skip ci] on the bookkeeping commits stops them retriggering other workflows.
+commitMessages:
+  readmeContent: ":pencil: Update summary in README [skip ci] [upptime]"
+  summaryJson: ":card_file_box: Update status summary [skip ci] [upptime]"
+  statusChange: "$EMOJI $SITE_NAME is $STATUS ($RESPONSE_CODE in $RESPONSE_TIME ms) [skip ci] [upptime]"
+  graphsUpdate: ":bento: Update graphs [skip ci] [upptime]"
+  commitAuthorName: "Upptime Bot"
+  commitAuthorEmail: "73812536+upptime-bot@users.noreply.github.com"
+
+# ---------------------------------------------------------------------------
+# Schedules (cron, UTC)
+# ---------------------------------------------------------------------------
+workflowSchedule:
+  uptime: "*/5 * * * *" # Check every 5 minutes
+  responseTime: "0 23 * * *" # Record response times daily
+  graphs: "0 0 * * *" # Regenerate graphs daily
+  staticSite: "0 1 * * *" # Rebuild + deploy the status page daily
+  summary: "0 0 * * *" # Refresh README summary daily
+  updates: "0 3 * * *" # Check for Upptime updates daily
+  updateTemplate: "0 0 * * 0" # Apply template updates weekly
