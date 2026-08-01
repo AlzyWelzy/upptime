@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help install validate lint format test check probe http tls dispatch health clean
+.PHONY: help install validate lint format test check probe http tls slo dispatch health clean
 
 VENV   := .venv
 PYTHON := $(VENV)/bin/python
@@ -42,6 +42,9 @@ http: $(VENV) ## Probe only the HTTP endpoints
 
 tls: $(VENV) ## Show TLS certificate expiry
 	$(PYTHON) .github/scripts/probe.py --tls
+
+slo: $(VENV) ## Report uptime against SLO targets with error budgets
+	$(PYTHON) .github/scripts/slo.py
 
 dispatch: $(VENV) ## Run the Upptime workflows in order (needs GH_TOKEN or gh)
 	$(PYTHON) .github/scripts/dispatch.py

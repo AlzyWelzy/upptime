@@ -70,3 +70,36 @@ jobs:
 
       - name: Validate .upptimerc.yml
         run: python .github/scripts/validate_config.py
+
+      - name: Report SLO status
+        run: python .github/scripts/slo.py || true
+
+  lint-workflows:
+    name: Lint workflows and markdown
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      # Only our hand-written workflows are linted. The eight Upptime-generated
+      # ones are machine-written and regenerated on a schedule, so findings
+      # there are neither actionable nor fixable from this repository.
+      - name: actionlint
+        run: |
+          curl -sSfL -o actionlint.bash \
+            https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash
+          bash actionlint.bash
+          ./actionlint -color \
+            .github/workflows/validate.yml \
+            .github/workflows/pipeline-health.yml
+
+      - name: markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@6bf21b07787794f89a243495939cd651942aeabe # v24.1.0
+        with:
+          globs: |
+            *.md
+            docs/*.md
+            .github/**/*.md

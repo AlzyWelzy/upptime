@@ -69,15 +69,108 @@ sites:
     connectTimeout: 10
     requestTimeout: 30
 
-  - name: pacestreak.net
-    slug: pacestreak-net
-    url: https://pacestreak.net
+  # Vanity domains. Each 30x-redirects to the canonical site; redirects are
+  # followed, so these assert the whole chain — DNS, certificate, redirect, and
+  # the destination rendering — not merely that the domain resolves.
+  - name: rajpoot.me
+    slug: rajpoot-me
+    url: https://rajpoot.me # -> www.rajpoot.dev
     maxResponseTime: 3000
     expectedStatusCodes:
       - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
     maxRedirects: 3
     connectTimeout: 10
     requestTimeout: 30
+
+  - name: alzywelzy.com
+    slug: alzywelzy-com
+    url: https://alzywelzy.com # -> www.rajpoot.dev
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  - name: www.alzywelzy.com
+    slug: www-alzywelzy-com
+    url: https://www.alzywelzy.com # -> www.rajpoot.dev
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  - name: welzyalzy.com
+    slug: welzyalzy-com
+    url: https://welzyalzy.com # -> www.rajpoot.dev
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  - name: www.welzyalzy.com
+    slug: www-welzyalzy-com
+    url: https://www.welzyalzy.com # -> www.rajpoot.dev
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  - name: rajpoot.blog
+    slug: rajpoot-blog
+    url: https://rajpoot.blog # -> blog.rajpoot.dev
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  - name: www.rajpoot.blog
+    slug: www-rajpoot-blog
+    url: https://www.rajpoot.blog # -> blog.rajpoot.dev
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  # Not launched. Serves a Spaceship parking page over http, and https accepts
+  # the TLS handshake but never returns a response — verified hanging for 30s
+  # over both IPv4 and IPv6. This monitor is therefore RED until that is fixed,
+  # which is correct: https is what visitors will use. Timeouts are kept short
+  # so three retries do not add 90s to every run.
+  #
+  # NOTE: the previous entry here monitored pacestreak.NET, which is not a
+  # domain you own — that is why it was permanently NXDOMAIN.
+  - name: pacestreak.com
+    slug: pacestreak-com
+    url: https://pacestreak.com
+    maxResponseTime: 5000
+    expectedStatusCodes:
+      - 200
+    maxRedirects: 3
+    connectTimeout: 5
+    requestTimeout: 10
+
+  # rajpoot.xyz is registered but deliberately NOT monitored. Its nameservers
+  # are Spaceship's defaults with no A/AAAA record at all, so every check would
+  # be NXDOMAIN forever — a permanently failing monitor that teaches you to
+  # ignore the status page. Add an entry here once it points somewhere.
 
   # -------------------------------------------------------------------------
   # TLS certificate expiry
@@ -109,6 +202,57 @@ sites:
   - name: scorefit.net TLS certificate
     slug: scorefit-net-tls
     url: scorefit.net
+    check: ssl
+
+  - name: rajpoot.me TLS certificate
+    slug: rajpoot-me-tls
+    url: rajpoot.me
+    check: ssl
+
+  # A vanity domain's certificate expiring breaks the redirect with a browser
+  # interstitial just as thoroughly as it would on the canonical site.
+  #
+  # Only the apex is monitored for alzywelzy.com and welzyalzy.com: apex and www
+  # are covered by the same certificate (identical notAfter), so a second check
+  # would add noise without adding coverage. rajpoot.blog is the exception —
+  # apex and www genuinely have separate certificates with different expiry
+  # dates, so both are monitored.
+  - name: alzywelzy.com TLS certificate
+    slug: alzywelzy-com-tls
+    url: alzywelzy.com
+    check: ssl
+
+  - name: welzyalzy.com TLS certificate
+    slug: welzyalzy-com-tls
+    url: welzyalzy.com
+    check: ssl
+
+  # WARNING (verified 2026-08-01): rajpoot.blog and www.rajpoot.blog serve TWO
+  # different certificates from the same anycast IP (15.197.162.184), chosen
+  # non-deterministically per connection — roughly 65% expire 2026-08-15 and
+  # 35% expire 2026-10-14. Renewal has reached some backends but not all.
+  #
+  # Consequence: after 2026-08-15 most visitors get an expired-certificate
+  # interstitial while a minority see a healthy site, and this check will FLAP
+  # rather than fail cleanly, because it samples one backend per run.
+  # A single ssl check cannot express "some backends are stale" — treat a flap
+  # here as a real problem, not a false positive.
+  - name: rajpoot.blog TLS certificate
+    slug: rajpoot-blog-tls
+    url: rajpoot.blog
+    check: ssl
+
+  - name: www.rajpoot.blog TLS certificate
+    slug: www-rajpoot-blog-tls
+    url: www.rajpoot.blog
+    check: ssl
+
+  # pacestreak.com's certificate is valid (Google Trust Services, Oct 2026)
+  # even though the origin never answers over https — so this check is
+  # meaningful and currently passes.
+  - name: pacestreak.com TLS certificate
+    slug: pacestreak-com-tls
+    url: pacestreak.com
     check: ssl
 
 # ---------------------------------------------------------------------------

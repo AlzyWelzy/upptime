@@ -1,0 +1,48 @@
+# Service level objectives, as monthly uptime targets.
+#
+# Read by .github/scripts/slo.py (`make slo`). Numbers are percentages; the
+# report converts each into an error budget — the downtime the target actually
+# permits over the window — which is far more actionable than a bare percentage.
+#
+# Pick targets you are willing to act on. A target nobody will wake up for is
+# not an objective, it is decoration.
+
+default: 99.0 # ~7.2 hours of downtime per 30 days
+
+targets:
+  # Primary site. 99.9% is ~43 minutes per 30 days.
+  rajpoot-dev: 99.9
+  www-rajpoot-dev: 99.9
+
+  # Blog: content, not critical path. 99% is ~7.2 hours per 30 days.
+  blog-rajpoot-dev: 99.0
+
+  scorefit-net: 99.5 # ~3.6 hours per 30 days
+
+  # Vanity redirects. They matter (a broken redirect is a broken link someone
+  # shared), but they are not the critical path, so 99% is honest.
+  rajpoot-me: 99.0
+  alzywelzy-com: 99.0
+  www-alzywelzy-com: 99.0
+  welzyalzy-com: 99.0
+  www-welzyalzy-com: 99.0
+  rajpoot-blog: 99.0
+  www-rajpoot-blog: 99.0
+
+  # Not launched: serves a parking page, and https never returns a response.
+  # Deliberately 0 so a known-broken monitor does not drown out real breaches
+  # in the report. Raise this once the site is live over https.
+  pacestreak-com: 0.0
+
+  # TLS certificates are binary: valid, or an outage for every visitor.
+  # These should never be under target, so the target is total.
+  rajpoot-dev-tls: 100.0
+  www-rajpoot-dev-tls: 100.0
+  blog-rajpoot-dev-tls: 100.0
+  scorefit-net-tls: 100.0
+  rajpoot-me-tls: 100.0
+  alzywelzy-com-tls: 100.0
+  welzyalzy-com-tls: 100.0
+  rajpoot-blog-tls: 100.0
+  www-rajpoot-blog-tls: 100.0
+  pacestreak-com-tls: 100.0
