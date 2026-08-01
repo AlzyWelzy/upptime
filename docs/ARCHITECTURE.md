@@ -67,6 +67,25 @@ Two consequences worth knowing:
   action versions in the generated workflows, and the next `update-template`
   run would revert them.
 
+## The README is partly machine-owned
+
+Summary CI rewrites parts of `README.md` on every run. Three comment-marker
+pairs are load-bearing, and two of them are destructive:
+
+| Marker pair    | What Summary CI does with it                                     |
+| -------------- | ---------------------------------------------------------------- |
+| `status pages` | Replaces the block with the generated status table — expected     |
+| `docs`         | **Replaces the entire block with a single link to the status site** |
+| `description`  | **Replaces the entire block with one boilerplate sentence**       |
+
+The `docs` and `description` replacements are unconditional and total. This
+repository lost 140 lines of documentation that way — see commit `76ae66ebc`.
+
+The replacements only fire if the markers are present, so `README.md`
+deliberately uses **only** the `status pages` markers (plus `live status`).
+Do not add the other two back. Custom prose belongs either outside all markers
+or, better, in this `docs/` directory, which Upptime never touches.
+
 ## Check types
 
 | Type              | What it proves                                    | `url` form      |
