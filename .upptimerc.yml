@@ -31,6 +31,9 @@ sites:
     expectedStatusCodes:
       - 200
     __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10 # seconds
+    requestTimeout: 30 # seconds
 
   - name: www.rajpoot.dev
     slug: www-rajpoot-dev
@@ -39,6 +42,9 @@ sites:
     expectedStatusCodes:
       - 200
     __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
 
   - name: blog.rajpoot.dev
     slug: blog-rajpoot-dev
@@ -47,6 +53,9 @@ sites:
     expectedStatusCodes:
       - 200
     __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
 
   - name: scorefit.net
     slug: scorefit-net
@@ -56,6 +65,9 @@ sites:
     expectedStatusCodes:
       - 200
     __dangerous__body_down_if_text_missing: "ScoreFit"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
 
   - name: pacestreak.net
     slug: pacestreak-net
@@ -63,6 +75,41 @@ sites:
     maxResponseTime: 3000
     expectedStatusCodes:
       - 200
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  # -------------------------------------------------------------------------
+  # TLS certificate expiry
+  # -------------------------------------------------------------------------
+  # `check: ssl` connects to the host and reads the certificate's notAfter date.
+  # It reports DOWN when the certificate expires in less than 7 days, and UP
+  # otherwise — there is no intermediate "expiring soon" state.
+  #
+  # NOTE: for ssl checks `url` must be a BARE HOSTNAME, not a URL. The value is
+  # passed straight to https.request as `host`; a "https://" prefix fails.
+  #
+  # Expiry is otherwise silent and total: an HTTP check keeps passing right up
+  # until the cert lapses, then every visitor gets a browser interstitial.
+  - name: rajpoot.dev TLS certificate
+    slug: rajpoot-dev-tls
+    url: rajpoot.dev
+    check: ssl
+
+  - name: www.rajpoot.dev TLS certificate
+    slug: www-rajpoot-dev-tls
+    url: www.rajpoot.dev
+    check: ssl
+
+  - name: blog.rajpoot.dev TLS certificate
+    slug: blog-rajpoot-dev-tls
+    url: blog.rajpoot.dev
+    check: ssl
+
+  - name: scorefit.net TLS certificate
+    slug: scorefit-net-tls
+    url: scorefit.net
+    check: ssl
 
 # ---------------------------------------------------------------------------
 # Secrets allowlist

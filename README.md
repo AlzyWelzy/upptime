@@ -74,9 +74,43 @@ silent no-op.
 
 ### Checks
 
-Every monitor asserts a status code **and** a string that must appear in the
-response body. A 200 alone doesn't prove the page rendered — the content
+Each service is monitored two ways.
+
+**Availability** — asserts a status code **and** a string that must appear in
+the response body. A 200 alone doesn't prove the page rendered; the content
 assertion catches deploys that serve a blank or error shell successfully.
+Failing checks are retried automatically (3 attempts, 2s then 10s apart), so a
+single transient blip does not raise an incident.
+
+**TLS certificate expiry** — `check: ssl` entries read the certificate's
+`notAfter` date. Expiry is otherwise a silent, total outage: HTTP checks keep
+passing right up until the certificate lapses, then every visitor hits a
+browser interstitial.
+
+Two caveats on the TLS checks: they report **down** only when the certificate
+has under **7 days** left (there is no "expiring soon" state), and `url` must
+be a **bare hostname** — the value is passed straight through as a socket host,
+so an `https://` prefix fails.
+
+### Validating changes
+
+[`validate.yml`](./.github/workflows/validate.yml) runs
+[`validate_config.py`](./.github/scripts/validate_config.py) on every PR
+touching the config. Upptime runs on a cron, so a malformed config doesn't fail
+loudly — an endpoint just silently stops being monitored. The check catches
+duplicate or missing slugs, wrong URL form per check type, out-of-range status
+codes, empty content assertions, malformed cron expressions, and notification
+credentials declared without their on switch.
+
+Run it locally with:
+
+```bash
+pip install pyyaml
+python .github/scripts/validate_config.py
+```
+
+This is the one workflow in `.github/workflows` that is safe to edit by hand —
+`update-template` only regenerates the eight files Upptime owns.
 
 ### How data is stored
 

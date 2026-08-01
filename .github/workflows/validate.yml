@@ -1,0 +1,50 @@
+# Validates .upptimerc.yml before it can break monitoring.
+#
+# This file is SAFE to edit by hand, unlike the other workflows in this
+# directory. The `update-template` job only deletes and regenerates the eight
+# workflows Upptime owns (graphs, response-time, setup, site, summary,
+# update-template, updates, uptime); anything else here is left alone.
+
+name: Validate Config
+
+on:
+  pull_request:
+    paths:
+      - ".upptimerc.yml"
+      - ".github/scripts/validate_config.py"
+      - ".github/workflows/validate.yml"
+  push:
+    branches: [master]
+    paths:
+      - ".upptimerc.yml"
+      - ".github/scripts/validate_config.py"
+  workflow_dispatch:
+
+# Least privilege: this job only reads the tree. The generated Upptime
+# workflows need write access to commit history; this one does not.
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: Validate .upptimerc.yml
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check pyyaml
+
+      - name: Validate configuration
+        run: python .github/scripts/validate_config.py
