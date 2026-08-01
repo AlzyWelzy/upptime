@@ -105,6 +105,19 @@ credentials declared without their on switch.
 This is the one workflow in `.github/workflows` that is safe to edit by hand —
 `update-template` only regenerates the eight files Upptime owns.
 
+### Watchdog
+
+Upptime tells you when a *service* breaks. Nothing tells you when the *monitor*
+breaks — and a stalled monitor is indistinguishable from a perfectly healthy
+service. [`pipeline-health.yml`](.github/workflows/pipeline-health.yml) runs
+daily and fails (emailing the repository owner) if `history/summary.json` is
+missing or any monitor's data has gone stale. It is the one alert that still
+works when the rest of the pipeline is down.
+
+```bash
+python3 .github/scripts/check_pipeline_health.py
+```
+
 ### Local tooling
 
 ```bash

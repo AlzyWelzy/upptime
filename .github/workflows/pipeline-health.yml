@@ -1,0 +1,47 @@
+# Watchdog for the monitoring pipeline itself.
+#
+# Upptime reports when a service breaks. Nothing reports when the *monitor*
+# breaks — and a stalled monitor is indistinguishable from a perfectly healthy
+# service. This repository has already lost weeks of monitoring that way.
+#
+# When this job fails, GitHub emails the repository owner. That is the point:
+# it is the only alert that still works when the rest of the pipeline is down.
+#
+# Safe to hand-edit — `update-template` only regenerates the eight workflows
+# Upptime owns.
+
+name: Pipeline Health
+
+on:
+  schedule:
+    - cron: "0 8 * * *" # daily, after a full night of checks
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pipeline-health
+  cancel-in-progress: true
+
+jobs:
+  health:
+    name: Check monitoring data is fresh
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install --disable-pip-version-check pyyaml
+
+      - name: Check pipeline health
+        run: python .github/scripts/check_pipeline_health.py
