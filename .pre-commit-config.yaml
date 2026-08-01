@@ -1,0 +1,34 @@
+# Catch config mistakes before they are committed, not after a cron reveals them.
+#   pip install pre-commit && pre-commit install
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-yaml
+        # The generated Upptime workflows embed a very large SECRETS_CONTEXT
+        # expression; they are machine-written and already valid.
+        exclude: ^\.github/workflows/(graphs|response-time|setup|site|summary|update-template|updates|uptime)\.yml$
+      - id: check-json
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+        exclude: ^(history|api|graphs)/
+      - id: trailing-whitespace
+        exclude: ^(history|api|graphs)/
+      - id: detect-private-key
+      - id: check-added-large-files
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.9.6
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+
+  - repo: local
+    hooks:
+      - id: upptime-config
+        name: validate .upptimerc.yml
+        entry: python3 .github/scripts/validate_config.py
+        language: system
+        files: ^\.upptimerc\.yml$
+        pass_filenames: false

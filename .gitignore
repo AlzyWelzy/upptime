@@ -6,6 +6,13 @@ node_modules/
 .pnp
 .pnp.js
 
+# Python tooling (see Makefile)
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+
 # Logs
 *.log
 npm-debug.log*

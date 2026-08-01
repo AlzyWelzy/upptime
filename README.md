@@ -102,15 +102,32 @@ duplicate or missing slugs, wrong URL form per check type, out-of-range status
 codes, empty content assertions, malformed cron expressions, and notification
 credentials declared without their on switch.
 
-Run it locally with:
-
-```bash
-pip install pyyaml
-python .github/scripts/validate_config.py
-```
-
 This is the one workflow in `.github/workflows` that is safe to edit by hand —
 `update-template` only regenerates the eight files Upptime owns.
+
+### Local tooling
+
+```bash
+make install   # create .venv from requirements-dev.txt
+make check     # lint + tests + config validation, exactly what CI runs
+make probe     # probe every monitor from your machine, right now
+make tls       # certificate expiry, with days remaining
+make help      # all targets
+```
+
+`make probe` is the fastest way to tell a real outage apart from a problem with
+the monitoring pipeline: it re-runs each monitor's status code, latency budget,
+content assertion, and certificate check locally.
+
+## 📚 Documentation
+
+- **[docs/RUNBOOK.md](docs/RUNBOOK.md)** — what to do when something goes red,
+  ordered by likelihood
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — how the pieces fit together
+  and why the workflows are generated
+- **[CONTRIBUTING.md](CONTRIBUTING.md)** — adding monitors and notification
+  channels without the silent-failure traps
+- **[SECURITY.md](SECURITY.md)** — reporting vulnerabilities
 
 ### How data is stored
 

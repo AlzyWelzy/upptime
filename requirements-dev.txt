@@ -1,0 +1,5 @@
+# Tooling for validating .upptimerc.yml locally and in CI.
+# Pinned so CI and local runs agree.
+pyyaml==6.0.2
+pytest==8.3.4
+ruff==0.9.6
