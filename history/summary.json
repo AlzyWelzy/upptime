@@ -76,18 +76,20 @@
     "url": "https://rajpoot.me",
     "icon": "https://icons.duckduckgo.com/ip3/rajpoot.me.ico",
     "slug": "rajpoot-me",
-    "status": "up",
-    "uptime": "100.00%",
-    "uptimeDay": "100.00%",
-    "uptimeWeek": "100.00%",
-    "uptimeMonth": "100.00%",
-    "uptimeYear": "100.00%",
+    "status": "down",
+    "uptime": "99.73%",
+    "uptimeDay": "99.73%",
+    "uptimeWeek": "99.73%",
+    "uptimeMonth": "99.73%",
+    "uptimeYear": "99.73%",
     "time": 247,
     "timeDay": 247,
     "timeWeek": 247,
     "timeMonth": 247,
     "timeYear": 247,
-    "dailyMinutesDown": {}
+    "dailyMinutesDown": {
+      "2026-08-02": 3
+    }
   },
   {
     "name": "alzywelzy.com",
@@ -203,18 +205,18 @@
     "icon": "https://icons.duckduckgo.com/ip3/pacestreak.com.ico",
     "slug": "pacestreak-com",
     "status": "down",
-    "uptime": "0.26%",
-    "uptimeDay": "0.26%",
-    "uptimeWeek": "0.26%",
-    "uptimeMonth": "0.26%",
-    "uptimeYear": "0.26%",
+    "uptime": "0.18%",
+    "uptimeDay": "0.18%",
+    "uptimeWeek": "0.18%",
+    "uptimeMonth": "0.18%",
+    "uptimeYear": "0.18%",
     "time": 0,
     "timeDay": 0,
     "timeWeek": 0,
     "timeMonth": 0,
     "timeYear": 0,
     "dailyMinutesDown": {
-      "2026-08-02": 216,
+      "2026-08-02": 564,
       "2026-08-01": 485
     }
   },
@@ -295,18 +297,20 @@
     "url": "rajpoot.me",
     "icon": "https://icons.duckduckgo.com/ip3/null.ico",
     "slug": "rajpoot-me-tls",
-    "status": "up",
-    "uptime": "100.00%",
-    "uptimeDay": "100.00%",
-    "uptimeWeek": "100.00%",
-    "uptimeMonth": "100.00%",
-    "uptimeYear": "100.00%",
+    "status": "down",
+    "uptime": "99.92%",
+    "uptimeDay": "99.92%",
+    "uptimeWeek": "99.92%",
+    "uptimeMonth": "99.92%",
+    "uptimeYear": "99.92%",
     "time": 0,
     "timeDay": 0,
     "timeWeek": 0,
     "timeMonth": 0,
     "timeYear": 0,
-    "dailyMinutesDown": {}
+    "dailyMinutesDown": {
+      "2026-08-02": 1
+    }
   },
   {
     "name": "alzywelzy.com TLS certificate",
