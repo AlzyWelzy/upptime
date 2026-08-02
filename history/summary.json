@@ -76,19 +76,19 @@
     "url": "https://rajpoot.me",
     "icon": "https://icons.duckduckgo.com/ip3/rajpoot.me.ico",
     "slug": "rajpoot-me",
-    "status": "down",
-    "uptime": "99.73%",
-    "uptimeDay": "99.73%",
-    "uptimeWeek": "99.73%",
-    "uptimeMonth": "99.73%",
-    "uptimeYear": "99.73%",
-    "time": 247,
-    "timeDay": 247,
-    "timeWeek": 247,
-    "timeMonth": 247,
-    "timeYear": 247,
+    "status": "up",
+    "uptime": "91.86%",
+    "uptimeDay": "91.86%",
+    "uptimeWeek": "91.86%",
+    "uptimeMonth": "91.86%",
+    "uptimeYear": "91.86%",
+    "time": 291,
+    "timeDay": 291,
+    "timeWeek": 291,
+    "timeMonth": 291,
+    "timeYear": 291,
     "dailyMinutesDown": {
-      "2026-08-02": 3
+      "2026-08-02": 93
     }
   },
   {
@@ -205,18 +205,18 @@
     "icon": "https://icons.duckduckgo.com/ip3/pacestreak.com.ico",
     "slug": "pacestreak-com",
     "status": "down",
-    "uptime": "0.18%",
-    "uptimeDay": "0.18%",
-    "uptimeWeek": "0.18%",
-    "uptimeMonth": "0.18%",
-    "uptimeYear": "0.18%",
+    "uptime": "0.16%",
+    "uptimeDay": "0.16%",
+    "uptimeWeek": "0.16%",
+    "uptimeMonth": "0.16%",
+    "uptimeYear": "0.16%",
     "time": 0,
     "timeDay": 0,
     "timeWeek": 0,
     "timeMonth": 0,
     "timeYear": 0,
     "dailyMinutesDown": {
-      "2026-08-02": 564,
+      "2026-08-02": 657,
       "2026-08-01": 485
     }
   },
@@ -297,19 +297,19 @@
     "url": "rajpoot.me",
     "icon": "https://icons.duckduckgo.com/ip3/null.ico",
     "slug": "rajpoot-me-tls",
-    "status": "down",
-    "uptime": "99.92%",
-    "uptimeDay": "99.92%",
-    "uptimeWeek": "99.92%",
-    "uptimeMonth": "99.92%",
-    "uptimeYear": "99.92%",
+    "status": "up",
+    "uptime": "91.86%",
+    "uptimeDay": "91.86%",
+    "uptimeWeek": "91.86%",
+    "uptimeMonth": "91.86%",
+    "uptimeYear": "91.86%",
     "time": 0,
     "timeDay": 0,
     "timeWeek": 0,
     "timeMonth": 0,
     "timeYear": 0,
     "dailyMinutesDown": {
-      "2026-08-02": 1
+      "2026-08-02": 93
     }
   },
   {
