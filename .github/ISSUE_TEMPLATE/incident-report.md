@@ -16,7 +16,7 @@ Check https://status.rajpoot.dev first.
 
 ## Affected service
 
-<!-- rajpoot.dev / www.rajpoot.dev / blog.rajpoot.dev / scorefit.net / pacestreak.net -->
+<!-- The domain or endpoint, as listed on https://status.rajpoot.dev -->
 
 ## What is wrong?
 

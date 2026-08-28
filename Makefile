@@ -1,5 +1,5 @@
 .DEFAULT_GOAL := help
-.PHONY: help install validate lint format test check probe http tls slo dispatch health clean
+.PHONY: help install validate lint format test check probe http tls slo slugs dispatch health clean
 
 VENV   := .venv
 PYTHON := $(VENV)/bin/python
@@ -45,6 +45,11 @@ tls: $(VENV) ## Show TLS certificate expiry
 
 slo: $(VENV) ## Report uptime against SLO targets with error budgets
 	$(PYTHON) .github/scripts/slo.py
+
+slugs: $(VENV) ## List monitor slugs (for maintenance windows' expectedDown)
+	@$(PYTHON) -c "import yaml; \
+		print('\n'.join(s['slug'] for s in \
+			yaml.safe_load(open('.upptimerc.yml'))['sites'] if s.get('slug')))"
 
 dispatch: $(VENV) ## Run the Upptime workflows in order (needs GH_TOKEN or gh)
 	$(PYTHON) .github/scripts/dispatch.py

@@ -154,9 +154,6 @@ sites:
   # over both IPv4 and IPv6. This monitor is therefore RED until that is fixed,
   # which is correct: https is what visitors will use. Timeouts are kept short
   # so three retries do not add 90s to every run.
-  #
-  # NOTE: the previous entry here monitored pacestreak.NET, which is not a
-  # domain you own — that is why it was permanently NXDOMAIN.
   - name: pacestreak.com
     slug: pacestreak-com
     url: https://pacestreak.com
@@ -316,7 +313,7 @@ status-website:
       href: https://github.com/$OWNER/$REPO
   metaTags:
     - name: description
-      content: Live uptime and response-time status for rajpoot.dev, blog.rajpoot.dev, scorefit.net and pacestreak.net.
+      content: Live uptime and response-time status for rajpoot.dev, blog.rajpoot.dev, scorefit.net and related domains.
     - name: og:title
       content: Rajpoot Status
     - name: og:description

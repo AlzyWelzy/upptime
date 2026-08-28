@@ -11,6 +11,7 @@ on:
   pull_request:
     paths:
       - ".upptimerc.yml"
+      - "slo.yml"
       - ".github/scripts/**"
       - ".github/workflows/validate.yml"
       - "tests/**"
@@ -20,6 +21,7 @@ on:
     branches: [master]
     paths:
       - ".upptimerc.yml"
+      - "slo.yml"
       - ".github/scripts/**"
       - "tests/**"
   workflow_dispatch:

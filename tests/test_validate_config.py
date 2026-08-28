@@ -330,3 +330,126 @@ def test_cli_strict_mode_fails_on_warnings(tmp_path):
     path.write_text(yaml.safe_dump(config))
     assert main([str(path)]) == 0
     assert main([str(path), "--strict"]) == 1
+
+
+# --------------------------------------------------------------------------
+# slo.yml cross-validation
+#
+# These only run when `validate` is given a root, because they read sibling
+# files. `validate(config)` alone stays a pure function of the mapping.
+# --------------------------------------------------------------------------
+
+
+def write_root(tmp_path: Path, slo: dict | str | None = None, data: dict | None = None) -> Path:
+    """Build a throwaway repo root with an optional slo.yml and data dirs."""
+    if slo is not None:
+        (tmp_path / "slo.yml").write_text(slo if isinstance(slo, str) else yaml.safe_dump(slo))
+    for directory, slugs in (data or {}).items():
+        target = tmp_path / directory
+        target.mkdir(exist_ok=True)
+        for slug in slugs:
+            if directory == "history":
+                (target / f"{slug}.yml").write_text("status: up\n")
+            else:
+                (target / slug).mkdir()
+    return tmp_path
+
+
+def test_slo_absent_is_silent(tmp_path):
+    report = validate(base_config(), root=write_root(tmp_path))
+    assert report.ok and report.warnings == []
+
+
+def test_slo_unknown_slug_rejected(tmp_path):
+    root = write_root(tmp_path, slo={"targets": {"example": 99.0, "ghost": 99.0}})
+    errors = validate(base_config(), root=root).errors
+    assert any("`ghost`" in e and "no effect" in e for e in errors)
+    assert not any("`example`" in e for e in errors)
+
+
+def test_slo_out_of_range_target_rejected(tmp_path):
+    root = write_root(tmp_path, slo={"targets": {"example": 150}})
+    assert any("between 0 and 100" in e for e in validate(base_config(), root=root).errors)
+
+
+def test_slo_zero_and_hundred_are_valid(tmp_path):
+    config = base_config(
+        sites=[
+            {"name": "a", "slug": "a", "url": "https://a.com"},
+            {"name": "b", "slug": "b", "url": "https://b.com"},
+        ]
+    )
+    root = write_root(tmp_path, slo={"targets": {"a": 0, "b": 100}})
+    assert validate(config, root=root).ok
+
+
+def test_slo_non_numeric_target_rejected(tmp_path):
+    root = write_root(tmp_path, slo={"targets": {"example": "99%"}})
+    assert any("must be a number" in e for e in validate(base_config(), root=root).errors)
+
+
+def test_slo_boolean_target_rejected(tmp_path):
+    """`True` is an int in Python; it must not slip through as 1%."""
+    root = write_root(tmp_path, slo={"targets": {"example": True}})
+    assert any("must be a number" in e for e in validate(base_config(), root=root).errors)
+
+
+def test_slo_bad_default_rejected(tmp_path):
+    root = write_root(tmp_path, slo={"default": -1, "targets": {"example": 99.0}})
+    assert any("`default`" in e for e in validate(base_config(), root=root).errors)
+
+
+def test_slo_monitor_without_target_warns(tmp_path):
+    root = write_root(tmp_path, slo={"default": 99.0, "targets": {}})
+    report = validate(base_config(), root=root)
+    assert report.ok
+    assert any("`example` has no target" in w for w in report.warnings)
+
+
+def test_slo_invalid_yaml_rejected(tmp_path):
+    root = write_root(tmp_path, slo="targets: [unclosed\n")
+    assert any("not valid YAML" in e for e in validate(base_config(), root=root).errors)
+
+
+def test_slo_non_mapping_rejected(tmp_path):
+    root = write_root(tmp_path, slo="- a\n- b\n")
+    assert any("must be a YAML mapping" in e for e in validate(base_config(), root=root).errors)
+
+
+def test_slo_targets_must_be_mapping(tmp_path):
+    root = write_root(tmp_path, slo={"targets": ["example"]})
+    assert any("must be a mapping" in e for e in validate(base_config(), root=root).errors)
+
+
+# --------------------------------------------------------------------------
+# Orphaned monitor data
+# --------------------------------------------------------------------------
+
+
+def test_orphaned_history_warns(tmp_path):
+    root = write_root(tmp_path, data={"history": ["example", "removed"]})
+    report = validate(base_config(), root=root)
+    assert report.ok  # stale data is not fatal, but it must be visible
+    assert any("'removed'" in w and "history/" in w for w in report.warnings)
+    assert not any("'example'" in w for w in report.warnings)
+
+
+def test_orphaned_api_and_graphs_reported_together(tmp_path):
+    root = write_root(tmp_path, data={"api": ["removed"], "graphs": ["removed"]})
+    warnings = validate(base_config(), root=root).warnings
+    assert any("'removed'" in w and "api/" in w and "graphs/" in w for w in warnings)
+
+
+def test_history_summary_and_license_are_not_orphans(tmp_path):
+    root = write_root(tmp_path, data={"history": ["example"]})
+    (root / "history" / "summary.json").write_text("[]")
+    (root / "history" / "LICENSE").write_text("ODbL")
+    assert validate(base_config(), root=root).warnings == []
+
+
+def test_repository_data_has_no_orphans():
+    """Every history/, api/ and graphs/ entry belongs to a configured monitor."""
+    config = yaml.safe_load((REPO_ROOT / ".upptimerc.yml").read_text())
+    report = validate(config, root=REPO_ROOT)
+    assert report.ok, report.errors
+    assert report.warnings == [], report.warnings

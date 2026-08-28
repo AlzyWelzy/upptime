@@ -19,16 +19,23 @@ shipping and spend the time on reliability instead.
 
 ## Current targets
 
-| Monitor                | Target  | Downtime allowed / 30 days |
-| ---------------------- | ------- | -------------------------- |
-| `rajpoot.dev`          | 99.9%   | ~43 minutes                |
-| `www.rajpoot.dev`      | 99.9%   | ~43 minutes                |
-| `scorefit.net`         | 99.5%   | ~3.6 hours                 |
-| `blog.rajpoot.dev`     | 99%     | ~7.2 hours                 |
-| `pacestreak.net`       | 0%      | not launched — see below   |
-| All TLS certificates   | 100%    | none                       |
+[`slo.yml`](../slo.yml) is authoritative — this table describes the *tiers*, so
+that it stays true as monitors are added. Run `make slo` for the live per-monitor
+numbers.
 
-Everything unlisted uses the `default` in `slo.yml` (99%).
+| Tier                        | Target | Downtime allowed / 30 days |
+| --------------------------- | ------ | -------------------------- |
+| Primary site (apex and www) | 99.9%  | ~43 minutes                |
+| ScoreFit                    | 99.5%  | ~3.6 hours                 |
+| Blog                        | 99%    | ~7.2 hours                 |
+| Vanity redirect domains     | 99%    | ~7.2 hours                 |
+| TLS certificates            | 100%   | none — see below           |
+| Not-yet-launched domains    | 0%     | see below                  |
+
+Anything without an explicit entry uses the `default` in `slo.yml` (99%).
+`validate_config.py` fails the build on a target whose slug matches no monitor,
+and warns about a monitor with no target — so the two files cannot drift apart
+without CI saying so.
 
 ## Choosing a target
 
@@ -48,10 +55,11 @@ Two deliberate exceptions here:
 - **TLS certificates are 100%.** They are binary — a valid certificate or a
   browser interstitial for every visitor. There is no meaningful partial
   credit, so there is no budget to spend.
-- **`pacestreak.net` is 0%.** The domain has no DNS records yet, so the monitor
-  is permanently down by design. A realistic target would make it the loudest
-  entry in every report and train you to ignore the report. Raise it to a real
-  number when the domain goes live.
+- **`pacestreak.com` is 0%.** The site is not launched: it serves a parking page
+  over http, and https accepts the TLS handshake but never returns a response.
+  The monitor is therefore red by design. A realistic target would make it the
+  loudest entry in every report and train you to ignore the report. Raise it to
+  a real number once the site answers over https.
 
 ## Caveats on the numbers
 

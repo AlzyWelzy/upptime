@@ -6,6 +6,11 @@ a malformed URL just means an endpoint silently stops being monitored until
 somebody notices. This runs on every pull request so that failure is caught at
 review time instead.
 
+The config does not stand alone, so neither does this check. slo.yml's targets
+are keyed by monitor slug and applied by string match, and history/, api/ and
+graphs/ hold one entry per slug; both drift out of step with `sites` silently.
+Those cross-file checks run whenever the config's directory is available.
+
 Exits non-zero and reports every problem found, not just the first.
 """
 
@@ -63,6 +68,12 @@ ON_SWITCHES = {
 VALID_SCHEDULE_KEYS = frozenset(
     {"graphs", "responseTime", "staticSite", "summary", "updateTemplate", "updates", "uptime"}
 )
+
+#: Kept in step with slo.py, which applies this when slo.yml omits `default`.
+DEFAULT_SLO_TARGET = 99.0
+
+#: Directories Upptime writes one entry per monitor slug into.
+DATA_DIRS = ("history", "api", "graphs")
 
 
 @dataclass
@@ -290,8 +301,108 @@ def validate_schedule(config: dict, report: Report) -> None:
             report.error(f"workflowSchedule.{key}: '{expr}' is not a 5-field cron expression")
 
 
-def validate(config: dict) -> Report:
-    """Validate a parsed .upptimerc.yml mapping."""
+def configured_slugs(config: dict) -> set[str]:
+    """Every explicitly-pinned monitor slug in the config."""
+    return {
+        str(site["slug"])
+        for site in config.get("sites") or []
+        if isinstance(site, dict) and site.get("slug")
+    }
+
+
+def _check_percent(report: Report, label: str, value: object) -> bool:
+    if isinstance(value, bool) or not isinstance(value, int | float):
+        report.error(f"{label} must be a number, got {value!r}")
+        return False
+    if not 0 <= value <= 100:
+        report.error(f"{label} must be a percentage between 0 and 100, got {value}")
+        return False
+    return True
+
+
+def validate_slo(config: dict, report: Report, root: Path) -> None:
+    """Cross-check slo.yml against the configured monitors.
+
+    slo.py silently falls back to the default target for any slug it does not
+    recognise, so a stale or typo'd entry here fails in the quietest possible
+    way: the target you wrote never applies, and the monitor is reported against
+    a number nobody chose. Nothing about the output looks wrong.
+    """
+    path = root / "slo.yml"
+    if not path.exists():
+        # slo.yml is optional — slo.py has a documented default.
+        return
+
+    try:
+        slo = yaml.safe_load(path.read_text())
+    except yaml.YAMLError as exc:
+        report.error(f"slo.yml is not valid YAML: {exc}")
+        return
+
+    if slo is None:
+        slo = {}
+    if not isinstance(slo, dict):
+        report.error("slo.yml must be a YAML mapping")
+        return
+
+    _check_percent(report, "slo.yml: `default`", slo.get("default", DEFAULT_SLO_TARGET))
+
+    targets = slo.get("targets") or {}
+    if not isinstance(targets, dict):
+        report.error("slo.yml: `targets` must be a mapping of slug to percentage")
+        return
+
+    configured = configured_slugs(config)
+    for slug, value in targets.items():
+        _check_percent(report, f"slo.yml: target `{slug}`", value)
+        if str(slug) not in configured:
+            report.error(
+                f"slo.yml: target `{slug}` matches no monitor in `sites` — it has no effect"
+            )
+
+    # Not an error: the default is a legitimate choice. But it should be a
+    # deliberate one, and a monitor added without a target gets it by omission.
+    for slug in sorted(configured - {str(s) for s in targets}):
+        report.warn(f"slo.yml: `{slug}` has no target and falls back to the default")
+
+
+def validate_data_artifacts(config: dict, report: Report, root: Path) -> None:
+    """Flag recorded data belonging to monitors that are no longer configured.
+
+    `update-template` prunes history/, api/ and graphs/ entries for slugs it no
+    longer recognises — but only the next time it runs. Until then the status
+    page and the README keep rendering the removed monitor's last known state,
+    which reads as a live service rather than a deleted one.
+    """
+    configured = configured_slugs(config)
+    if not configured:
+        return
+
+    orphans: dict[str, list[str]] = {}
+    for name in DATA_DIRS:
+        directory = root / name
+        if not directory.is_dir():
+            continue
+        if name == "history":
+            found = {path.stem for path in directory.glob("*.yml")}
+        else:
+            found = {path.name for path in directory.iterdir() if path.is_dir()}
+        for slug in found - configured:
+            orphans.setdefault(slug, []).append(name)
+
+    for slug, dirs in sorted(orphans.items()):
+        report.warn(
+            f"'{slug}' has data under {'/, '.join(dirs)}/ but is not in `sites` — "
+            f"stale data from a removed monitor"
+        )
+
+
+def validate(config: dict, root: Path | None = None) -> Report:
+    """Validate a parsed .upptimerc.yml mapping.
+
+    When ``root`` is given, sibling files are cross-checked too: slo.yml's
+    targets and the recorded data under history/, api/ and graphs/.
+    """
     report = Report()
 
     if not isinstance(config, dict):
@@ -312,6 +423,9 @@ def validate(config: dict) -> Report:
     validate_secrets(config, report)
     validate_status_website(config, report)
     validate_schedule(config, report)
+    if root is not None:
+        validate_slo(config, report, root)
+        validate_data_artifacts(config, report, root)
     return report
 
 
@@ -333,7 +447,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"error: {args.config.name} is not valid YAML:\n{exc}", file=sys.stderr)
         return 2
 
-    report = validate(config)
+    report = validate(config, root=args.config.parent)
 
     for message in report.warnings:
         print(f"warning: {message}")

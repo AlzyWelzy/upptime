@@ -27,8 +27,8 @@ repos:
   - repo: local
     hooks:
       - id: upptime-config
-        name: validate .upptimerc.yml
+        name: validate .upptimerc.yml and slo.yml
         entry: python3 .github/scripts/validate_config.py
         language: system
-        files: ^\.upptimerc\.yml$
+        files: ^(\.upptimerc\.yml|slo\.yml)$
         pass_filenames: false

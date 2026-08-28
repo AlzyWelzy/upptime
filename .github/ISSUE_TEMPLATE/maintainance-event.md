@@ -13,7 +13,9 @@ page and to suppress downtime alerts for the listed endpoints.
 - `start` / `end` must be ISO 8601 UTC timestamps.
 - `expectedDown` is a comma-separated list of endpoint SLUGS (not names).
 
-Valid slugs: rajpoot-dev, www-rajpoot-dev, blog-rajpoot-dev, scorefit-net, pacestreak-net
+Valid slugs are the `slug:` values in .upptimerc.yml — `make slugs` prints them.
+A slug that is not in the config is silently ignored, so the alerts you meant to
+suppress will fire anyway. Copy them, don't type them from memory.
 -->
 
 <!--

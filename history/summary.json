@@ -72,26 +72,6 @@
     "dailyMinutesDown": {}
   },
   {
-    "name": "pacestreak.net",
-    "url": "https://pacestreak.net",
-    "icon": "https://icons.duckduckgo.com/ip3/pacestreak.net.ico",
-    "slug": "pacestreak-net",
-    "status": "down",
-    "uptime": "42.54%",
-    "uptimeDay": "42.54%",
-    "uptimeWeek": "42.54%",
-    "uptimeMonth": "42.54%",
-    "uptimeYear": "42.54%",
-    "time": 0,
-    "timeDay": 0,
-    "timeWeek": 0,
-    "timeMonth": 0,
-    "timeYear": 0,
-    "dailyMinutesDown": {
-      "2026-08-01": 0
-    }
-  },
-  {
     "name": "rajpoot.dev TLS certificate",
     "url": "rajpoot.dev",
     "icon": "https://icons.duckduckgo.com/ip3/null.ico",
