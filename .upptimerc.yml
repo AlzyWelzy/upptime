@@ -293,6 +293,18 @@ skipDeleteIssues: true
 # ---------------------------------------------------------------------------
 # Status page
 # ---------------------------------------------------------------------------
+# ---------------------------------------------------------------------------
+# History graph colours
+# ---------------------------------------------------------------------------
+# Read by the status page's Graph.svelte for the interactive response-time
+# chart on each monitor's History page (defaults: #89e0cf / #1abc9c teal).
+# These are the site's green, so the chart matches the rest of the page.
+#
+# They do NOT affect the sparkline PNGs in the status list — those colours are
+# hardcoded in the upptime/graphs action.
+graphBackgroundColor: "#05df7233"
+graphBorderColor: "#05df72"
+
 status-website:
   cname: status.rajpoot.dev
   name: Rajpoot Status
@@ -343,6 +355,9 @@ status-website:
   # so the status page reads as part of the site rather than a bolted-on
   # third-party page.
   css: |
+    /* ---------------------------------------------------------------- */
+    /* Palette                                                          */
+    /* ---------------------------------------------------------------- */
     :root {
       /* Ground and text — the site's navy, not dark.css's near-black teal. */
       --body-background-color: #0b1020;
@@ -378,9 +393,103 @@ status-website:
       --error-button-border-color: #241659;
       --error-button-color: #ffffff;
 
-      /* Graphs are rendered for a dark ground already; no dimming. */
+      /* NOTE: these two are inert on the status list. global.css applies them
+         via `article .graph` (a descendant), but LiveStatus puts `.graph` on
+         the article ITSELF, so the rule never matches. They are left at the
+         no-op values for the History page, which does nest a `.graph`; the
+         list sparklines are toned down with a scrim further down instead. */
       --graph-opacity: 1;
       --graph-filter: none;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Typography                                                       */
+    /* ---------------------------------------------------------------- */
+    /* global.css asks for Roboto but never loads it, so this always fell
+       through to whatever the OS offered. A status page is the last thing
+       that should block on a font CDN, so this is a system stack: no
+       request, no FOUT, no third party in the render path. */
+    body {
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    header h1 {
+      font-size: 2.25rem;
+      letter-spacing: -0.022em;
+    }
+
+    header p.lead {
+      color: #90a1b9;
+      max-width: 62ch;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Monitor cards                                                    */
+    /* ---------------------------------------------------------------- */
+    /* Component styles are Svelte-scoped, so they carry an extra class.
+       These selectors match that specificity and win on source order —
+       this block is injected after them. */
+    section.live-status article.link {
+      border-radius: 0.6rem;
+      transition: border-color 0.18s ease, transform 0.18s ease;
+    }
+
+    section.live-status article.link:hover {
+      border-color: #3b4a63;
+      transform: translateY(-1px);
+    }
+
+    section.live-status article + article {
+      margin-top: 0.6rem;
+    }
+
+    /* The response-time PNGs are generated in a fixed bright mint (#89e0cf,
+       hardcoded in upptime/graphs — not configurable), so at full strength
+       each card wears a hard-edged blob louder than the status it decorates.
+       Layering a card-coloured scrim OVER the image dims the image alone;
+       putting opacity on the article would fade the text with it. Layer one
+       is the scrim, layer two the sparkline — inset from the edge and short
+       of full height so it reads behind the text, not beside it. */
+    article.graph.link {
+      background-image: linear-gradient(
+          rgba(15, 23, 43, 0.72),
+          rgba(15, 23, 43, 0.72)
+        ),
+        var(--background);
+      background-size: cover, auto 74%;
+      background-position: center, right 0.85rem center;
+      background-repeat: no-repeat, no-repeat;
+    }
+
+    /* The uptime and latency figures are the reason anyone opens this page,
+       so the labels recede and the numbers carry the contrast. Tabular
+       figures keep the columns from jittering as values change. */
+    section.live-status article > div {
+      color: #90a1b9;
+      font-size: 0.94rem;
+    }
+
+    article.graph .data {
+      color: #e5e7eb;
+      font-weight: 600;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: -0.01em;
+    }
+
+    section.live-status article h4 {
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+
+    /* On a narrow screen the card is too tight for both: the sparkline runs
+       under the latency figure. Decoration loses to the number. */
+    @media (max-width: 560px) {
+      article.graph.link {
+        background-image: none;
+      }
     }
 
 # ---------------------------------------------------------------------------
