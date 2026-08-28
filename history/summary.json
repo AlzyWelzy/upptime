@@ -77,11 +77,11 @@
     "icon": "https://icons.duckduckgo.com/ip3/rajpoot.me.ico",
     "slug": "rajpoot-me",
     "status": "up",
-    "uptime": "69.63%",
+    "uptime": "69.66%",
     "uptimeDay": "100.00%",
     "uptimeWeek": "100.00%",
-    "uptimeMonth": "69.63%",
-    "uptimeYear": "69.63%",
+    "uptimeMonth": "69.66%",
+    "uptimeYear": "69.66%",
     "time": 343,
     "timeDay": 126,
     "timeWeek": 148,
@@ -224,7 +224,7 @@
     "timeMonth": 0,
     "timeYear": 0,
     "dailyMinutesDown": {
-      "2026-08-28": 663,
+      "2026-08-28": 695,
       "2026-08-27": 1440,
       "2026-08-26": 1440,
       "2026-08-25": 1440,
@@ -332,11 +332,11 @@
     "icon": "https://icons.duckduckgo.com/ip3/null.ico",
     "slug": "rajpoot-me-tls",
     "status": "up",
-    "uptime": "69.63%",
+    "uptime": "69.66%",
     "uptimeDay": "100.00%",
     "uptimeWeek": "100.00%",
-    "uptimeMonth": "69.63%",
-    "uptimeYear": "69.63%",
+    "uptimeMonth": "69.66%",
+    "uptimeYear": "69.66%",
     "time": 0,
     "timeDay": 0,
     "timeWeek": 0,
@@ -431,9 +431,9 @@
     "url": "pacestreak.com",
     "icon": "https://icons.duckduckgo.com/ip3/null.ico",
     "slug": "pacestreak-com-tls",
-    "status": "up",
+    "status": "down",
     "uptime": "100.00%",
-    "uptimeDay": "100.00%",
+    "uptimeDay": "99.98%",
     "uptimeWeek": "100.00%",
     "uptimeMonth": "100.00%",
     "uptimeYear": "100.00%",
@@ -442,6 +442,8 @@
     "timeWeek": 0,
     "timeMonth": 0,
     "timeYear": 0,
-    "dailyMinutesDown": {}
+    "dailyMinutesDown": {
+      "2026-08-28": 0
+    }
   }
 ]
