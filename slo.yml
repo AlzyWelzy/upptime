@@ -29,10 +29,10 @@ targets:
   rajpoot-blog: 99.0
   www-rajpoot-blog: 99.0
 
-  # Not launched: serves a parking page, and https never returns a response.
-  # Deliberately 0 so a known-broken monitor does not drown out real breaches
-  # in the report. Raise this once the site is live over https.
-  pacestreak-com: 0.0
+  # Live since 2026-08-28. A static page on Cloudflare Pages with no origin to
+  # fall over, so it is held to the same bar as the other non-critical sites
+  # rather than the 99.9% the primary domain carries.
+  pacestreak-com: 99.0
 
   # TLS certificates are binary: valid, or an outage for every visitor.
   # These should never be under target, so the target is total.

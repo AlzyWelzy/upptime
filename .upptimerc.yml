@@ -149,20 +149,19 @@ sites:
     connectTimeout: 10
     requestTimeout: 30
 
-  # Not launched. Serves a Spaceship parking page over http, and https accepts
-  # the TLS handshake but never returns a response — verified hanging for 30s
-  # over both IPv4 and IPv6. This monitor is therefore RED until that is fixed,
-  # which is correct: https is what visitors will use. Timeouts are kept short
-  # so three retries do not add 90s to every run.
+  # Launched 2026-08-28: apex is a proxied CNAME to the pacestreak Cloudflare
+  # Pages project. www deliberately 301-redirects here rather than serving a
+  # second copy, so the apex is the only hostname worth monitoring.
   - name: pacestreak.com
     slug: pacestreak-com
     url: https://pacestreak.com
-    maxResponseTime: 5000
+    maxResponseTime: 3000
     expectedStatusCodes:
       - 200
+    __dangerous__body_down_if_text_missing: "PaceStreak"
     maxRedirects: 3
-    connectTimeout: 5
-    requestTimeout: 10
+    connectTimeout: 10
+    requestTimeout: 30
 
   # rajpoot.xyz is registered but deliberately NOT monitored. Its nameservers
   # are Spaceship's defaults with no A/AAAA record at all, so every check would

@@ -30,7 +30,7 @@ numbers.
 | Blog                        | 99%    | ~7.2 hours                 |
 | Vanity redirect domains     | 99%    | ~7.2 hours                 |
 | TLS certificates            | 100%   | none — see below           |
-| Not-yet-launched domains    | 0%     | see below                  |
+| Not-yet-launched domains    | 0%     | none at present — see below |
 
 Anything without an explicit entry uses the `default` in `slo.yml` (99%).
 `validate_config.py` fails the build on a target whose slug matches no monitor,
@@ -55,11 +55,10 @@ Two deliberate exceptions here:
 - **TLS certificates are 100%.** They are binary — a valid certificate or a
   browser interstitial for every visitor. There is no meaningful partial
   credit, so there is no budget to spend.
-- **`pacestreak.com` is 0%.** The site is not launched: it serves a parking page
-  over http, and https accepts the TLS handshake but never returns a response.
-  The monitor is therefore red by design. A realistic target would make it the
-  loudest entry in every report and train you to ignore the report. Raise it to
-  a real number once the site answers over https.
+- **Not-yet-launched domains sit at 0%.** A monitor that is red by design would
+  otherwise be the loudest entry in every report and train you to ignore the
+  report. There are none at present — `pacestreak.com` launched on 2026-08-28
+  and now carries a real 99% target.
 
 ## Caveats on the numbers
 
