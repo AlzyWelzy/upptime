@@ -329,6 +329,60 @@ status-website:
     Allow: /
     Sitemap: https://status.rajpoot.dev/sitemap.xml
 
+  # -------------------------------------------------------------------------
+  # Theme
+  # -------------------------------------------------------------------------
+  # `theme: dark` above loads themes/dark.css; this block is injected as an
+  # inline <style> AFTER that stylesheet, so these :root values win. Everything
+  # here is a variable the status page actually reads (the full set is in
+  # upptime/status-page static/themes/dark.css) — a variable it does not define
+  # is silently ignored, so do not invent names.
+  #
+  # dark.css is teal (#1abc9c on near-black). These values retune it to the
+  # palette rajpoot.dev itself uses — navy ground, indigo chrome, green accent —
+  # so the status page reads as part of the site rather than a bolted-on
+  # third-party page.
+  css: |
+    :root {
+      /* Ground and text — the site's navy, not dark.css's near-black teal. */
+      --body-background-color: #0b1020;
+      --body-text-color: #e5e7eb;
+      --card-background-color: #0f172b;
+      --card-border-color: #1e2939;
+
+      /* Navigation. The active tab is underlined in the site's green accent. */
+      --nav-background-color: #0f172b;
+      --nav-border-bottom-color: #1e2939;
+      --nav-current-border-bottom-color: #05df72;
+
+      /* Status accents. These carry the actual meaning of the page, so they
+         stay high-contrast against the navy card and keep the conventional
+         green/amber/red mapping — brand fit never outranks legibility here. */
+      --up-border-left-color: #05df72;
+      --degraded-border-left-color: #f7b731;
+      --down-border-left-color: #e40014;
+      --down-background-color: #2a0810;
+
+      /* Status pills. Dark text on a bright fill, for AA contrast. */
+      --tag-color: #0b1020;
+      --tag-up-background-color: #05df72;
+      --tag-degraded-background-color: #f7b731;
+      --tag-down-background-color: #ff6568;
+      --change-background-color: #f7b731;
+
+      /* Buttons pick up the site's deep indigo. */
+      --submit-button-background-color: #312e81;
+      --submit-button-border-color: #241659;
+      --submit-button-color: #ffffff;
+      --error-button-background-color: #312e81;
+      --error-button-border-color: #241659;
+      --error-button-color: #ffffff;
+
+      /* Graphs are rendered for a dark ground already; no dimming. */
+      --graph-opacity: 1;
+      --graph-filter: none;
+    }
+
 # ---------------------------------------------------------------------------
 # Commit messages
 # ---------------------------------------------------------------------------
