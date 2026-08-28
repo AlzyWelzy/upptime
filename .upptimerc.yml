@@ -455,8 +455,8 @@ status-website:
        of full height so it reads behind the text, not beside it. */
     article.graph.link {
       background-image: linear-gradient(
-          rgba(15, 23, 43, 0.72),
-          rgba(15, 23, 43, 0.72)
+          rgba(15, 23, 43, 0.55),
+          rgba(15, 23, 43, 0.55)
         ),
         var(--background);
       background-size: cover, auto 74%;
