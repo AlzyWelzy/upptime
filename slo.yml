@@ -31,7 +31,9 @@ targets:
 
   # Live since 2026-08-28. A static page on Cloudflare Pages with no origin to
   # fall over, so it is held to the same bar as the other non-critical sites
-  # rather than the 99.9% the primary domain carries.
+  # rather than the 99.9% the primary domain carries. www is canonical; the
+  # apex entry covers the redirect.
+  www-pacestreak-com: 99.0
   pacestreak-com: 99.0
 
   # TLS certificates are binary: valid, or an outage for every visitor.
@@ -46,3 +48,4 @@ targets:
   rajpoot-blog-tls: 100.0
   www-rajpoot-blog-tls: 100.0
   pacestreak-com-tls: 100.0
+  www-pacestreak-com-tls: 100.0

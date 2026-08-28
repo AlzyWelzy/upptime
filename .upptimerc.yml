@@ -149,12 +149,23 @@ sites:
     connectTimeout: 10
     requestTimeout: 30
 
-  # Launched 2026-08-28: apex is a proxied CNAME to the pacestreak Cloudflare
-  # Pages project. www deliberately 301-redirects here rather than serving a
-  # second copy, so the apex is the only hostname worth monitoring.
+  # Launched 2026-08-28 on Cloudflare Pages. www is canonical; the apex
+  # 301-redirects to it. Redirects are followed, so the apex check asserts the
+  # whole chain — DNS, certificate, redirect and the destination rendering.
   - name: pacestreak.com
     slug: pacestreak-com
-    url: https://pacestreak.com
+    url: https://pacestreak.com # -> www.pacestreak.com
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "PaceStreak"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  - name: www.pacestreak.com
+    slug: www-pacestreak-com
+    url: https://www.pacestreak.com
     maxResponseTime: 3000
     expectedStatusCodes:
       - 200
@@ -243,12 +254,20 @@ sites:
     url: www.rajpoot.blog
     check: ssl
 
-  # pacestreak.com's certificate is valid (Google Trust Services, Oct 2026)
-  # even though the origin never answers over https — so this check is
-  # meaningful and currently passes.
+  # Cloudflare Pages issues a SEPARATE certificate per custom domain — verified
+  # 2026-08-28: the apex cert's SAN list is [pacestreak.com] and www's is
+  # [www.pacestreak.com], with different notAfter timestamps. They are not one
+  # cert with two names, so one check cannot cover both. The apex matters even
+  # though it only redirects: an expired cert there is a browser interstitial
+  # before the redirect ever runs.
   - name: pacestreak.com TLS certificate
     slug: pacestreak-com-tls
     url: pacestreak.com
+    check: ssl
+
+  - name: www.pacestreak.com TLS certificate
+    slug: www-pacestreak-com-tls
+    url: www.pacestreak.com
     check: ssl
 
 # ---------------------------------------------------------------------------
