@@ -492,6 +492,30 @@ status-website:
       }
     }
 
+    /* ---------------------------------------------------------------- */
+    /* TLS certificate cards                                            */
+    /* ---------------------------------------------------------------- */
+    /* A `check: ssl` monitor has no HTTP origin, so uptime-monitor writes
+       icon "https://icons.duckduckgo.com/ip3/null.ico" — DuckDuckGo answers
+       that with a generic placeholder glyph — and responseTime 0. The card
+       therefore shows a meaningless icon and an authoritative-looking
+       "0 ms" that is not a measurement of anything.
+       
+       There is no class distinguishing these cards, but the null icon is an
+       exact, stable marker of one, so it does the selecting. Nothing here is
+       load-bearing: if :has() is unavailable the rule is dropped and the row
+       simply reappears. */
+    article img.icon[src*="null.ico"] {
+      display: none;
+    }
+
+    /* The second row is average response time; the first is uptime, which is
+       real for a certificate check and stays. `div + div` only matches when
+       there are two, so a card with just uptime is left alone. */
+    article:has(img.icon[src*="null.ico"]) > div + div {
+      display: none;
+    }
+
 # ---------------------------------------------------------------------------
 # Commit messages
 # ---------------------------------------------------------------------------
