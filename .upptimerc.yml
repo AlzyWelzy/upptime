@@ -442,6 +442,24 @@ status-website:
          list sparklines are toned down with a scrim further down instead. */
       --graph-opacity: 1;
       --graph-filter: none;
+
+      /* Motion. The built-in CSS easings (ease, ease-out) are too weak to
+         read as intentional — these are stronger custom curves, applied
+         everywhere below instead of the bare keyword. Entering/appearing
+         elements get the ease-out curve (fast start, feels responsive);
+         nothing on this page moves on-screen, so ease-in-out is unused. */
+      --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    /* A status page is read occasionally, not hundreds of times a day, so a
+       little motion is fine — but every rule below stays under 200ms and
+       animates only transform/opacity (GPU, no layout cost). Anyone with
+       prefers-reduced-motion gets the state changes with no movement. */
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation-duration: 0.001ms !important;
+        transition-duration: 0.001ms !important;
+      }
     }
 
     /* ---------------------------------------------------------------- */
@@ -469,6 +487,42 @@ status-website:
     }
 
     /* ---------------------------------------------------------------- */
+    /* Navigation                                                       */
+    /* ---------------------------------------------------------------- */
+    /* dark.css switches the current tab's underline instantly; every other
+       tab should still feel alive on hover rather than static text. */
+    nav a {
+      transition: color 160ms var(--ease-out);
+    }
+
+    nav a:hover {
+      color: #e5e7eb;
+    }
+
+    /* ---------------------------------------------------------------- */
+    /* Buttons                                                          */
+    /* ---------------------------------------------------------------- */
+    /* Instant press feedback — the interface should feel like it heard the
+       click before the action even completes. Subtle scale, not a bounce. */
+    button,
+    .submit-button,
+    .error-button {
+      transition: transform 140ms var(--ease-out), filter 140ms var(--ease-out);
+    }
+
+    button:active,
+    .submit-button:active,
+    .error-button:active {
+      transform: scale(0.97);
+    }
+
+    button:hover,
+    .submit-button:hover,
+    .error-button:hover {
+      filter: brightness(1.08);
+    }
+
+    /* ---------------------------------------------------------------- */
     /* Monitor cards                                                    */
     /* ---------------------------------------------------------------- */
     /* Component styles are Svelte-scoped, so they carry an extra class.
@@ -476,16 +530,82 @@ status-website:
        this block is injected after them. */
     section.live-status article.link {
       border-radius: 0.6rem;
-      transition: border-color 0.18s ease, transform 0.18s ease;
+      transition: border-color 160ms var(--ease-out),
+        transform 160ms var(--ease-out), box-shadow 160ms var(--ease-out);
+      /* The list appears once on load, not hundreds of times a day, so a
+         single soft entrance earns its keep — it just needs to stay well
+         under the point where it reads as sluggish rather than a page that
+         rendered smoothly. */
+      animation: monitor-card-in 260ms var(--ease-out) backwards;
     }
 
+    /* Shadow is tinted toward the card's own navy rather than pure black —
+       a black shadow on a dark card just looks like a smudge. */
     section.live-status article.link:hover {
       border-color: #3b4a63;
       transform: translateY(-1px);
+      box-shadow: 0 4px 16px -4px rgba(5, 10, 25, 0.55);
+    }
+
+    /* Every card is a link. Pressing it should feel like pressing something,
+       not just navigate on release — the whole point of instant feedback. */
+    section.live-status article.link:active {
+      transform: translateY(0) scale(0.99);
+      transition-duration: 90ms;
+    }
+
+    /* Keyboard focus needs its own ring — :hover alone leaves tab users with
+       no indication which card is selected. Offset outline in the accent
+       green keeps it legible against the navy card and consistent with the
+       nav's active-tab underline. */
+    section.live-status article.link:focus-visible {
+      outline: 2px solid #05df72;
+      outline-offset: 2px;
     }
 
     section.live-status article + article {
       margin-top: 0.6rem;
+    }
+
+    /* Cap the stagger: past the first screenful, further delay only makes
+       the list feel slow to finish, not more polished. */
+    section.live-status article.link:nth-child(n + 9) {
+      animation-delay: 0ms;
+    }
+    section.live-status article.link:nth-child(1) {
+      animation-delay: 0ms;
+    }
+    section.live-status article.link:nth-child(2) {
+      animation-delay: 30ms;
+    }
+    section.live-status article.link:nth-child(3) {
+      animation-delay: 60ms;
+    }
+    section.live-status article.link:nth-child(4) {
+      animation-delay: 90ms;
+    }
+    section.live-status article.link:nth-child(5) {
+      animation-delay: 120ms;
+    }
+    section.live-status article.link:nth-child(6) {
+      animation-delay: 150ms;
+    }
+    section.live-status article.link:nth-child(7) {
+      animation-delay: 180ms;
+    }
+    section.live-status article.link:nth-child(8) {
+      animation-delay: 210ms;
+    }
+
+    @keyframes monitor-card-in {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     /* The response-time PNGs are generated in a fixed bright mint (#89e0cf,
