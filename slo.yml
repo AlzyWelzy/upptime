@@ -22,6 +22,7 @@ targets:
   # Vanity redirects. They matter (a broken redirect is a broken link someone
   # shared), but they are not the critical path, so 99% is honest.
   rajpoot-me: 99.0
+  www-rajpoot-me: 99.0
   alzywelzy-com: 99.0
   www-alzywelzy-com: 99.0
   welzyalzy-com: 99.0
@@ -43,6 +44,7 @@ targets:
   blog-rajpoot-dev-tls: 100.0
   scorefit-net-tls: 100.0
   rajpoot-me-tls: 100.0
+  www-rajpoot-me-tls: 100.0
   alzywelzy-com-tls: 100.0
   welzyalzy-com-tls: 100.0
   rajpoot-blog-tls: 100.0
