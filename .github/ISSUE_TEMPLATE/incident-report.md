@@ -11,12 +11,12 @@ Automated downtime issues are opened by Upptime. Use this template only for
 problems the monitor missed — for example a page that returns HTTP 200 but
 renders broken, is slow for some users, or fails only from certain regions.
 
-Check https://status.rajpoot.dev first.
+Check https://status.rajpoot.app first.
 -->
 
 ## Affected service
 
-<!-- The domain or endpoint, as listed on https://status.rajpoot.dev -->
+<!-- The domain or endpoint, as listed on https://status.rajpoot.app -->
 
 ## What is wrong?
 

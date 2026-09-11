@@ -1,7 +1,7 @@
 blank_issues_enabled: true
 contact_links:
   - name: Current service status
-    url: https://status.rajpoot.dev
+    url: https://status.rajpoot.app
     about: Check live uptime and response times before reporting an outage
   - name: Upptime documentation
     url: https://upptime.js.org/docs

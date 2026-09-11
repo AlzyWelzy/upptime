@@ -69,20 +69,36 @@ sites:
     connectTimeout: 10
     requestTimeout: 30
 
-  # Vanity domains. Each 30x-redirects to the canonical site; redirects are
-  # followed, so these assert the whole chain — DNS, certificate, redirect, and
-  # the destination rendering — not merely that the domain resolves.
+  # rajpoot.me was handed over to my brother (Amit) on 2026-09-11 and is now
+  # his own independent site — it no longer redirects to www.rajpoot.dev, and
+  # the apex now 301-redirects to www.rajpoot.me instead. Still monitored from
+  # here at his request. Redirects are followed, so the apex check asserts the
+  # whole chain — DNS, certificate, redirect, and the destination rendering.
   - name: rajpoot.me
     slug: rajpoot-me
-    url: https://rajpoot.me # -> www.rajpoot.dev
+    url: https://rajpoot.me # -> www.rajpoot.me
     maxResponseTime: 3000
     expectedStatusCodes:
       - 200
-    __dangerous__body_down_if_text_missing: "Manvendra Rajpoot"
+    __dangerous__body_down_if_text_missing: "Amit Rajpoot"
     maxRedirects: 3
     connectTimeout: 10
     requestTimeout: 30
 
+  - name: www.rajpoot.me
+    slug: www-rajpoot-me
+    url: https://www.rajpoot.me
+    maxResponseTime: 3000
+    expectedStatusCodes:
+      - 200
+    __dangerous__body_down_if_text_missing: "Amit Rajpoot"
+    maxRedirects: 3
+    connectTimeout: 10
+    requestTimeout: 30
+
+  # Vanity domains. Each 30x-redirects to the canonical site; redirects are
+  # followed, so these assert the whole chain — DNS, certificate, redirect, and
+  # the destination rendering — not merely that the domain resolves.
   - name: alzywelzy.com
     slug: alzywelzy-com
     url: https://alzywelzy.com # -> www.rajpoot.dev
@@ -211,9 +227,17 @@ sites:
     url: scorefit.net
     check: ssl
 
+  # rajpoot.me and www.rajpoot.me carry separate certificates with different
+  # expiry dates (verified 2026-09-11), so both are monitored — same pattern
+  # as rajpoot.blog below.
   - name: rajpoot.me TLS certificate
     slug: rajpoot-me-tls
     url: rajpoot.me
+    check: ssl
+
+  - name: www.rajpoot.me TLS certificate
+    slug: www-rajpoot-me-tls
+    url: www.rajpoot.me
     check: ssl
 
   # A vanity domain's certificate expiring breaks the redirect with a browser
@@ -324,7 +348,7 @@ graphBackgroundColor: "#05df7233"
 graphBorderColor: "#05df72"
 
 status-website:
-  cname: status.rajpoot.dev
+  cname: status.rajpoot.app
   name: Rajpoot Status
   theme: dark
   logoUrl: https://www.rajpoot.dev/icon.svg
@@ -349,7 +373,7 @@ status-website:
     - name: og:description
       content: Live uptime and response-time status for rajpoot.dev and related services.
     - name: og:url
-      content: https://status.rajpoot.dev
+      content: https://status.rajpoot.app
     - name: og:type
       content: website
     - name: twitter:card
@@ -357,7 +381,7 @@ status-website:
   robotsText: |
     User-agent: *
     Allow: /
-    Sitemap: https://status.rajpoot.dev/sitemap.xml
+    Sitemap: https://status.rajpoot.app/sitemap.xml
 
   # -------------------------------------------------------------------------
   # Theme

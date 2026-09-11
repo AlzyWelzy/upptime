@@ -21,7 +21,7 @@ flowchart TD
     HIST --> GR["Graphs CI"] --> PNG["graphs/*.png"]
 
     SITE["Static Site CI<br/>daily"] --> GHP["gh-pages branch"]
-    GHP --> PAGE["status.rajpoot.dev"]
+    GHP --> PAGE["status.rajpoot.app"]
     SJ -.->|fetched at page load| PAGE
     API -.->|fetched at page load| PAGE
     ISS -.->|fetched at page load| PAGE
