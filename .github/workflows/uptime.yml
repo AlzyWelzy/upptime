@@ -28,17 +28,30 @@ jobs:
   release:
     name: Check status
     runs-on: ubuntu-latest
+    env:
+      GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
     steps:
+      - name: Create GitHub App token
+        id: app_token
+        if: ${{ vars.GH_APP_ID != '' && env.GH_APP_PRIVATE_KEY != '' }}
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.GH_APP_ID }}
+          private-key: ${{ env.GH_APP_PRIVATE_KEY }}
+      - name: Clear GitHub App private key
+        if: ${{ always() }}
+        shell: bash
+        run: echo "GH_APP_PRIVATE_KEY=" >> "$GITHUB_ENV"
       - name: Checkout
         uses: actions/checkout@v6
         with:
           ref: ${{ github.head_ref || github.ref_name }}
-          token: ${{ secrets.GH_PAT || github.token }}
+          token: ${{ steps.app_token.outputs.token || secrets.GH_PAT || github.token }}
       - name: Check endpoint status
         uses: upptime/uptime-monitor@v1.44.0
         with:
           command: "update"
         env:
-          GH_PAT: ${{ secrets.GH_PAT || github.token }}
+          GH_PAT: ${{ steps.app_token.outputs.token || secrets.GH_PAT || github.token }}
           # Configure the secret allowlist in .upptimerc.yml; do not edit this workflow directly.
           SECRETS_CONTEXT: '{"NOTIFICATION_TELEGRAM":${{ toJson(secrets.NOTIFICATION_TELEGRAM) }},"NOTIFICATION_TELEGRAM_BOT_KEY":${{ toJson(secrets.NOTIFICATION_TELEGRAM_BOT_KEY) }},"NOTIFICATION_TELEGRAM_CHAT_ID":${{ toJson(secrets.NOTIFICATION_TELEGRAM_CHAT_ID) }},"NOTIFICATION_EMAIL_SMTP":${{ toJson(secrets.NOTIFICATION_EMAIL_SMTP) }},"NOTIFICATION_EMAIL_SMTP_HOST":${{ toJson(secrets.NOTIFICATION_EMAIL_SMTP_HOST) }},"NOTIFICATION_EMAIL_SMTP_PORT":${{ toJson(secrets.NOTIFICATION_EMAIL_SMTP_PORT) }},"NOTIFICATION_EMAIL_SMTP_USERNAME":${{ toJson(secrets.NOTIFICATION_EMAIL_SMTP_USERNAME) }},"NOTIFICATION_EMAIL_SMTP_PASSWORD":${{ toJson(secrets.NOTIFICATION_EMAIL_SMTP_PASSWORD) }},"NOTIFICATION_EMAIL_FROM":${{ toJson(secrets.NOTIFICATION_EMAIL_FROM) }},"NOTIFICATION_EMAIL_TO":${{ toJson(secrets.NOTIFICATION_EMAIL_TO) }},"NOTIFICATIONS_DOWN_MESSAGE":${{ toJson(secrets.NOTIFICATIONS_DOWN_MESSAGE) }},"NOTIFICATIONS_UP_MESSAGE":${{ toJson(secrets.NOTIFICATIONS_UP_MESSAGE) }}}'
